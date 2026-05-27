@@ -1,0 +1,11 @@
+build/
+*.o
+*.a
+a.out
+.DS_Store
+.idea/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.out
+app/api_key.json
