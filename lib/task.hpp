@@ -27,7 +27,7 @@ class TTask : public TTaskBase {
   MyTuple<Args...> args_;
   TTaskScheduler& scheduler_;
   Any result_;
-  Conditions condition_ = NotProcessed;
+  std::atomic<Conditions> condition_ = NotProcessed;
   using ResultType = decltype(myApply(myDeclVal<Functor>(), myDeclVal<MyTuple<Args...>>()));
 
 public:
@@ -37,14 +37,13 @@ public:
     : func_(myForward<UFunctor>(functor)),
       args_(myForward<UArgs>(args)...), 
       scheduler_(scheduler) {};
+
   void execute() override {
-    if (condition_ == Processed) {
-      return;
+    Conditions expected = NotProcessed;
+    if (!condition_.compare_exchange_strong(expected, Processing)) {
+      if (expected == Processed) return;
+      if (expected == Processing) throw MyGraphCycleDetected{};
     }
-    if (condition_ == Processing) {
-      throw MyGraphCycleDetected{};
-    }
-    condition_ = Processing;
     if constexpr (my_is_void_v<ResultType>) {
       myApply(func_, args_);
     } else {

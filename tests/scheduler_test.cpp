@@ -15,7 +15,7 @@ TEST(BaseTests, ExecuteAllTest) {
   TTaskScheduler TaskScheduler;
   auto& task1 = TaskScheduler.add([](){std::cout << "Execute all works right! ";});
   auto& task2 = TaskScheduler.add([](){std::cout << "Yes it is!";});
-  TaskScheduler.executeAll();
+  TaskScheduler.executeAllParallel();
   std::string output = testing::internal::GetCapturedStdout();
   EXPECT_EQ(output, "Execute all works right! Yes it is!");
 }
@@ -30,7 +30,7 @@ TEST(BaseTests, VoidTask) {
   int side_effect = 0;
   TTaskScheduler scheduler;
   auto& task1 = scheduler.add([&side_effect](){ side_effect = 42; });
-  scheduler.executeAll();
+  scheduler.executeAllParallel();
   EXPECT_EQ(side_effect, 42);
 }
 
@@ -40,7 +40,7 @@ TEST(BaseTests, VoidTaskWithDependency) {
   auto& task1 = scheduler.add([](int x){ return x * 2; }, 10);
   auto future = task1.getFutureResult<const int&>();
   auto& task2 = scheduler.add([&result](const int& x){ result = x; }, future);
-  scheduler.executeAll();
+  scheduler.executeAllParallel();
   EXPECT_EQ(result, 20);
 }
 

@@ -6,6 +6,7 @@ add_executable(scheduler-tests
     future_test.cpp
     apply_test.cpp
     callable_types_test.cpp
+    concurrency_test.cpp
 )
 
 target_link_libraries(scheduler-tests PRIVATE

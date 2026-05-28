@@ -7,7 +7,7 @@ TEST(ApplyTest, ApplyTest) {
   TTaskScheduler TaskScheduler;
   auto& task1 = TaskScheduler.add([](int x){return x*2;}, 12);
   task1.apply([](int x){std::cout << x;});
-  TaskScheduler.executeAll();
+  TaskScheduler.executeAllParallel();
   std::string output = testing::internal::GetCapturedStdout();
   EXPECT_EQ(output, "24");
 }
